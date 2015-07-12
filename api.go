@@ -2,11 +2,18 @@ package derpigo
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
+)
+
+// derpigo-specific errors.
+var (
+	ErrNeedsOneSlash = errors.New("derpigo: this needs one slash in its invocation")
+	ErrNotSpecified  = errors.New("derpigo: some real bad shit happened")
 )
 
 /*
@@ -79,4 +86,24 @@ func (c *Connection) GetImage(id int) (*Image, error) {
 	}
 
 	return i, nil
+}
+
+/*
+GetThreadByName returns a Thread based on the given thread name.
+*/
+func (c *Connection) GetThreadByName(name string) (*Thread, error) {
+	if strings.Count(name, "/") != 1 {
+		return nil, ErrNeedsOneSlash
+	}
+
+	data, err := c.getJson(name+".json", 200)
+	if err != nil {
+		return nil, err
+	}
+
+	t := &Thread{}
+
+	err = json.Unmarshal(data, t)
+
+	return t, nil
 }
