@@ -1,6 +1,10 @@
 package derpigo
 
-import "time"
+import (
+	"encoding/json"
+	"strings"
+	"time"
+)
 
 /*
 Thread is the structure that Derpibooru replies with after asking for
@@ -23,6 +27,26 @@ type Topic struct {
 	// Some areas are containement. This is the unformatted Textile version
 	// of the body.
 	Body string `json:"body"`
+}
+
+/*
+GetThreadByName returns a Thread based on the given thread name.
+*/
+func (c *Connection) GetThreadByName(name string) (*Thread, error) {
+	if strings.Count(name, "/") != 1 {
+		return nil, ErrNeedsOneSlash
+	}
+
+	data, err := c.getJson(name+".json", 200)
+	if err != nil {
+		return nil, err
+	}
+
+	t := &Thread{}
+
+	err = json.Unmarshal(data, t)
+
+	return t, nil
 }
 
 /*

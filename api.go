@@ -1,7 +1,6 @@
 package derpigo
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -66,44 +65,4 @@ func (c *Connection) getJson(fragment string, expected int) (data []byte, err er
 	}
 
 	return
-}
-
-/*
-GetImage grabs image information with the api key of the recieving Connection.
-If something fails it returns an error.
-*/
-func (c *Connection) GetImage(id int) (*Image, error) {
-	data, err := c.getJson(fmt.Sprintf("%d.json", id), 200)
-	if err != nil {
-		return nil, err
-	}
-
-	i := &Image{}
-
-	err = json.Unmarshal(data, i)
-	if err != nil {
-		return nil, err
-	}
-
-	return i, nil
-}
-
-/*
-GetThreadByName returns a Thread based on the given thread name.
-*/
-func (c *Connection) GetThreadByName(name string) (*Thread, error) {
-	if strings.Count(name, "/") != 1 {
-		return nil, ErrNeedsOneSlash
-	}
-
-	data, err := c.getJson(name+".json", 200)
-	if err != nil {
-		return nil, err
-	}
-
-	t := &Thread{}
-
-	err = json.Unmarshal(data, t)
-
-	return t, nil
 }

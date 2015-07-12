@@ -1,5 +1,10 @@
 package derpigo
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 /*
 Image is an image on the Booru.
 */
@@ -68,4 +73,24 @@ type DupeReportModifier struct {
 	UploadCount  int    `json:"upload_count"`
 	PostCount    int    `json:"post_count"`
 	TopicCount   int    `json:"topic_count"`
+}
+
+/*
+GetImage grabs image information with the api key of the recieving Connection.
+If something fails it returns an error.
+*/
+func (c *Connection) GetImage(id int) (*Image, error) {
+	data, err := c.getJson(fmt.Sprintf("%d.json", id), 200)
+	if err != nil {
+		return nil, err
+	}
+
+	i := &Image{}
+
+	err = json.Unmarshal(data, i)
+	if err != nil {
+		return nil, err
+	}
+
+	return i, nil
 }
