@@ -11,8 +11,9 @@ import (
 
 // derpigo-specific errors.
 var (
-	ErrNeedsOneSlash = errors.New("derpigo: this needs one slash in its invocation")
-	ErrNotSpecified  = errors.New("derpigo: some real bad shit happened")
+	ErrNeedsOneSlash       = errors.New("derpigo: this needs one slash in its invocation")
+	ErrTooLongForBoardName = errors.New("derpigo: this is too long to be a board name")
+	ErrNotSpecified        = errors.New("derpigo: some real bad shit happened")
 )
 
 /*

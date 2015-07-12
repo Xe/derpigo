@@ -88,9 +88,6 @@ func (c *Connection) GetImage(id int) (*Image, error) {
 	i := &Image{}
 
 	err = json.Unmarshal(data, i)
-	if err != nil {
-		return nil, err
-	}
 
-	return i, nil
+	return i, err
 }

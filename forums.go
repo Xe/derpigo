@@ -46,7 +46,7 @@ func (c *Connection) GetThreadByName(name string) (*Thread, error) {
 
 	err = json.Unmarshal(data, t)
 
-	return t, nil
+	return t, err
 }
 
 /*
@@ -65,4 +65,27 @@ type Forum struct {
 		LastRepliedToAt string    `json:"last_replied_to_at"`
 		ID              string    `json:"id"`
 	} `json:"topics"`
+}
+
+/*
+GetForum returns a forum structure, all ready to go!
+
+Please note that the creators of this library are not responsible for any mental
+scarring that may result thanks to usage of this site's API.
+*/
+func (c *Connection) GetForum(name string) (*Forum, error) {
+	if len(name) > 4 {
+		return nil, ErrTooLongForBoardName
+	}
+
+	data, err := c.getJson(name+".json", 200)
+	if err != nil {
+		return nil, err
+	}
+
+	f := &Forum{}
+
+	err = json.Unmarshal(data, f)
+
+	return f, err
 }
