@@ -4,11 +4,9 @@ import "encoding/json"
 
 /*
 User represents one of the crazy, crazy people that populate this site.
-
-Because of limitations on Derpibooru's end, you have to look them up by ID, not by name :(
 */
 type User struct {
-	ID           string `json:"id"`
+	ID           int64  `json:"id"`
 	Name         string `json:"name"`
 	Avatar       string `json:"avatar"`
 	CommentCount int    `json:"comment_count"`

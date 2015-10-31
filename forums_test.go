@@ -15,7 +15,7 @@ func TestGetThreadByName(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if thread.Topics[0].TopicID != "5161dd617f123bd25900013d" {
+	if thread.Topics[0].TopicID != 8813 {
 		t.Fatal("The time wasting thread is different. Panic!")
 	}
 }

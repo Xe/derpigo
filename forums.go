@@ -18,8 +18,8 @@ type Thread struct {
 Topic is an individual forum topic with its replies.
 */
 type Topic struct {
-	ID      string `json:"id"`
-	TopicID string `json:"topic_id"`
+	ID      int64  `json:"id"`
+	TopicID int64  `json:"topic_id"`
 	Author  string `json:"author"`
 	Subject string `json:"subject"`
 
