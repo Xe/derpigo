@@ -1,10 +1,11 @@
 # derpigo
-
-Dead simple API binding for [Derpibooru](https://derpibooru.org) in Go.
-
----
-
+--
     import "github.com/Xe/derpigo"
+
+Pacakge derpigo is a set of dead simple Derpibooru [1] API bindings for Go
+programs.
+
+[1]: https://derpibooru.org
 
 ## Usage
 
@@ -32,6 +33,23 @@ Connection models the connection to the Derpibooru API.
 func New(apikey string) (c *Connection)
 ```
 New creates a new connection to the Derpibooru API.
+
+#### func (*Connection) DeleteImage
+
+```go
+func (c *Connection) DeleteImage(id, why string) (err error)
+```
+DeleteImage deletes an image from the booru. Needs assistant/mod/admin API key.
+
+This is useful for handling morons scriptedly. There seems to be a lot of them
+lately. This is a shame.
+
+#### func (*Connection) GetFilter
+
+```go
+func (c *Connection) GetFilter(id int64) (f *Filter, err error)
+```
+GetFilter returns a filter or an error.
 
 #### func (*Connection) GetForum
 
@@ -126,6 +144,31 @@ func (e *Error) Error() string
 ```
 Error satisfies the error interface.
 
+#### type Filter
+
+```go
+type Filter struct {
+	ID               int64   `json:"id"`
+	Name             string  `json:"name"`
+	Description      string  `json:"description"`
+	HiddenTagIds     []int64 `json:"hidden_tag_ids"`
+	SpoileredTagIds  []int64 `json:"spoilered_tag_ids"`
+	SpoileredTags    string  `json:"spoilered_tags"`
+	HiddenTags       string  `json:"hidden_tags"`
+	HiddenComplex    string  `json:"hidden_complex"`
+	SpoileredComplex string  `json:"spoilered_complex"`
+	Public           bool    `json:"public"`
+	System           bool    `json:"system"`
+	UserCount        int     `json:"user_count"`
+	UserID           int64   `json:"user_id"`
+}
+```
+
+Filter is an image or tag filter.
+
+These are really fucking important. If you filter things badly, shit's not gonna
+be fun.
+
 #### type Forum
 
 ```go
@@ -208,8 +251,8 @@ thread.
 
 ```go
 type Topic struct {
-	ID      string `json:"id"`
-	TopicID string `json:"topic_id"`
+	ID      int64  `json:"id"`
+	TopicID int64  `json:"topic_id"`
 	Author  string `json:"author"`
 	Subject string `json:"subject"`
 
@@ -226,7 +269,7 @@ Topic is an individual forum topic with its replies.
 
 ```go
 type User struct {
-	ID           string `json:"id"`
+	ID           int64  `json:"id"`
 	Name         string `json:"name"`
 	Avatar       string `json:"avatar"`
 	CommentCount int    `json:"comment_count"`
@@ -237,6 +280,3 @@ type User struct {
 ```
 
 User represents one of the crazy, crazy people that populate this site.
-
-Because of limitations on Derpibooru's end, you have to look them up by ID, not
-by name :(
