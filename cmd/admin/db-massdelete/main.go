@@ -17,8 +17,13 @@ package main
 
 import (
 	"flag"
+	"io"
 	"io/ioutil"
 	"log"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
 
 	"github.com/Xe/derpigo"
 )
@@ -26,6 +31,7 @@ import (
 var (
 	keyFile = flag.String("keyFile", "/home/xena/.local/share/within/db.cadance.key", "file with the derpibooru key to use")
 	reason  = flag.String("reason", "", "reason to use when deleting images")
+	needTag = flag.String("needtag", "", "optional tag an image must have to be deleted")
 )
 
 func main() {
@@ -43,7 +49,47 @@ func main() {
 	c := derpigo.New(string(key))
 
 	for _, i := range flag.Args() {
-		err := c.DeleteImage(i, *reason)
+		id, err := strconv.Atoi(i)
+		if err != nil {
+			log.Printf("Bad number %s", i)
+			continue
+		}
+
+		img, err := c.GetImage(id)
+		if err != nil {
+			log.Printf("couldn't fetch info on image %d: %v", id, err)
+		}
+
+		if *needTag != "" {
+			ok := false
+
+			for _, tag := range strings.Split(img.Tags, ", ") {
+				if tag == *needTag {
+					ok = true
+				}
+			}
+
+			if !ok && *needTag != "" {
+				log.Printf("Can't delete %d, doesn't have the tag %s", id, *needTag)
+			}
+		}
+
+		fout, err := os.Create("/home/xena/pictures/derpi/" + img.FileName)
+		if err != nil {
+			panic(err)
+		}
+		defer fout.Close()
+
+		resp, err := http.Get("https:" + img.Image)
+		if err != nil {
+			log.Printf("could not download image: %v", err)
+			continue
+		}
+		defer resp.Body.Close()
+
+		io.Copy(fout, resp.Body)
+
+		err = c.DeleteImage(i, *reason)
 		if err != nil {
 			panic(err)
 		}
