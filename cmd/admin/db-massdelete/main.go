@@ -74,7 +74,7 @@ func main() {
 			}
 		}
 
-		fout, err := os.Create("/home/xena/pictures/derpi/" + img.FileName)
+		fout, err := os.Create("/home/xena/pictures/derpi/" + img.ID + " " + img.Tags + "." + img.OriginalFormat)
 		if err != nil {
 			panic(err)
 		}
