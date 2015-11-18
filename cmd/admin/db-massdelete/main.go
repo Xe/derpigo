@@ -71,6 +71,7 @@ func main() {
 
 			if !ok && *needTag != "" {
 				log.Printf("Can't delete %d, doesn't have the tag %s", id, *needTag)
+				continue
 			}
 		}
 
