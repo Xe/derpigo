@@ -21,6 +21,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -51,8 +52,21 @@ func main() {
 	for _, i := range flag.Args() {
 		id, err := strconv.Atoi(i)
 		if err != nil {
-			log.Printf("Bad number %s", i)
-			continue
+			if strings.HasPrefix(i, "http") {
+				url, err := url.Parse(i)
+				if err != nil {
+					log.Printf("error reading %s: %#v", i, err)
+					continue
+				}
+
+				realid, err := strconv.Atoi(url.Path[1:])
+				if err != nil {
+					log.Printf("I don't understand %s", url.Path)
+					continue
+				}
+
+				id = realid
+			}
 		}
 
 		img, err := c.GetImage(id)
@@ -75,7 +89,12 @@ func main() {
 			}
 		}
 
-		fout, err := os.Create("/home/xena/pictures/derpi/" + img.ID + " " + img.Tags + "." + img.OriginalFormat)
+		tags := strings.Split(img.Tags, ", ")
+		if len(tags) > 10 {
+			tags = tags[0:11]
+		}
+
+		fout, err := os.Create("/home/xena/pictures/derpi/" + img.ID + " " + strings.Join(tags, ", ") + "." + img.OriginalFormat)
 		if err != nil {
 			panic(err)
 		}
