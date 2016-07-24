@@ -5,38 +5,68 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 /*
 Image is an image on the Booru.
 */
 type Image struct {
-	ID               string             `json:"id"`
-	IDNumber         int                `json:"id_number"`
-	CreatedAt        string             `json:"created_at"`
-	UpdatedAt        string             `json:"updated_at"`
-	DuplicateReports []*DuplicateReport `json:"duplicate_reports"`
-	FileName         string             `json:"file_name"`
-	Description      string             `json:"description"`
-	Uploader         string             `json:"uploader"`
-	Image            string             `json:"image"`
-	Score            int                `json:"score"`
-	Upvotes          int                `json:"upvotes"`
-	Downvotes        int                `json:"downvotes"`
-	Faves            int                `json:"faves"`
-	CommentCount     int                `json:"comment_count"`
-	Tags             string             `json:"tags"`
-	TagIds           []string           `json:"tag_ids"`
-	Width            int                `json:"width"`
-	Height           int                `json:"height"`
-	AspectRatio      float64            `json:"aspect_ratio"`
-	OriginalFormat   string             `json:"original_format"`
-	MimeType         string             `json:"mime_type"`
-	Sha512Hash       string             `json:"sha512_hash"`
-	OrigSha512Hash   string             `json:"orig_sha512_hash"`
-	SourceURL        string             `json:"source_url"`
-	License          string             `json:"license"`
-	Representations  struct {
+	ID               string    `json:"id"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+	DuplicateReports []struct {
+		ID                 int         `json:"id"`
+		State              string      `json:"state"`
+		Reason             string      `json:"reason"`
+		ImageID            int         `json:"image_id"`
+		DuplicateOfImageID int         `json:"duplicate_of_image_id"`
+		UserID             interface{} `json:"user_id"`
+		Modifier           struct {
+			ID           int           `json:"id"`
+			Name         string        `json:"name"`
+			Slug         string        `json:"slug"`
+			Role         string        `json:"role"`
+			Description  string        `json:"description"`
+			AvatarURL    string        `json:"avatar_url"`
+			CreatedAt    time.Time     `json:"created_at"`
+			CommentCount int           `json:"comment_count"`
+			UploadsCount int           `json:"uploads_count"`
+			PostCount    int           `json:"post_count"`
+			TopicCount   int           `json:"topic_count"`
+			Links        []interface{} `json:"links"`
+			Awards       []struct {
+				ImageURL  string    `json:"image_url"`
+				Title     string    `json:"title"`
+				ID        int       `json:"id"`
+				Label     string    `json:"label"`
+				AwardedOn time.Time `json:"awarded_on"`
+			} `json:"awards"`
+		} `json:"modifier"`
+		CreatedAt time.Time `json:"created_at"`
+	} `json:"duplicate_reports"`
+	FirstSeenAt     time.Time   `json:"first_seen_at"`
+	UploaderID      interface{} `json:"uploader_id"`
+	FileName        string      `json:"file_name"`
+	Description     string      `json:"description"`
+	Uploader        string      `json:"uploader"`
+	Image           string      `json:"image"`
+	Score           int         `json:"score"`
+	Upvotes         int         `json:"upvotes"`
+	Downvotes       int         `json:"downvotes"`
+	Faves           int         `json:"faves"`
+	CommentCount    int         `json:"comment_count"`
+	Tags            string      `json:"tags"`
+	TagIds          []string    `json:"tag_ids"`
+	Width           int         `json:"width"`
+	Height          int         `json:"height"`
+	AspectRatio     float64     `json:"aspect_ratio"`
+	OriginalFormat  string      `json:"original_format"`
+	MimeType        string      `json:"mime_type"`
+	Sha512Hash      string      `json:"sha512_hash"`
+	OrigSha512Hash  string      `json:"orig_sha512_hash"`
+	SourceURL       string      `json:"source_url"`
+	Representations struct {
 		ThumbTiny  string `json:"thumb_tiny"`
 		ThumbSmall string `json:"thumb_small"`
 		Thumb      string `json:"thumb"`
@@ -46,8 +76,9 @@ type Image struct {
 		Tall       string `json:"tall"`
 		Full       string `json:"full"`
 	} `json:"representations"`
-	IsRendered  bool `json:"is_rendered"`
-	IsOptimized bool `json:"is_optimized"`
+	IsRendered   bool          `json:"is_rendered"`
+	IsOptimized  bool          `json:"is_optimized"`
+	Interactions []interface{} `json:"interactions"`
 }
 
 /*
