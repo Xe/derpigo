@@ -8,7 +8,7 @@ func TestGetImage(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if i.IDNumber != 912673 {
-		t.Fatalf("ID is wrong: expected 912673, got %d", i.IDNumber)
+	if i.ID != "912673" {
+		t.Fatalf("ID is wrong: expected 912673, got %s", i.ID)
 	}
 }
