@@ -1,6 +1,11 @@
 package derpigo
 
-import "encoding/json"
+import (
+	"context"
+	"encoding/json"
+	"net/http"
+	"net/url"
+)
 
 /*
 User represents one of the crazy, crazy people that populate this site.
@@ -17,11 +22,9 @@ type User struct {
 
 /*
 GetUser returns information on a user based on their ID.
-
-This is kinda spartan, but it will do for now.
 */
-func (c *Connection) GetUser(id string) (*User, error) {
-	data, err := c.getJson("profiles/"+id+".json", 200)
+func (c *Connection) GetUser(ctx context.Context, id string) (*User, error) {
+	data, _, err := c.apiCall(ctx, http.MethodGet, "profiles/"+id+".json", url.Values{}, nil, 200)
 	if err != nil {
 		return nil, err
 	}

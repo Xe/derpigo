@@ -1,6 +1,7 @@
 package derpigo
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -83,17 +84,17 @@ type DupeReportModifier struct {
 GetImage grabs image information with the api key of the recieving Connection.
 If something fails it returns an error.
 */
-func (c *Connection) GetImage(id int) (*Image, error) {
-	data, err := c.getJson(fmt.Sprintf("%d.json", id), 200)
+func (c *Connection) GetImage(ctx context.Context, id int) (*Image, []Interaction, error) {
+	data, is, err := c.apiCall(ctx, http.MethodGet, fmt.Sprintf("%d.json", id), url.Values{}, nil, http.StatusOK)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	i := &Image{}
 
 	err = json.Unmarshal(data, i)
 
-	return i, err
+	return i, is, err
 }
 
 /*

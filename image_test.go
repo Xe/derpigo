@@ -3,7 +3,9 @@ package derpigo
 import "testing"
 
 func TestGetImage(t *testing.T) {
-	i, err := myC.GetImage(912673)
+	ctx, myC := setup()
+
+	i, _, err := myC.GetImage(ctx, 912673)
 	if err != nil {
 		t.Fatal(err)
 	}

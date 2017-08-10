@@ -11,9 +11,7 @@ programs.
 
 ```go
 var (
-	ErrNeedsOneSlash       = errors.New("derpigo: this needs one slash in its invocation")
-	ErrTooLongForBoardName = errors.New("derpigo: this is too long to be a board name")
-	ErrNotSpecified        = errors.New("derpigo: some real bad shit happened")
+	ErrNeedsOneSlash = errors.New("derpigo: this needs one slash in its invocation")
 )
 ```
 derpigo-specific errors.
@@ -30,7 +28,7 @@ Connection models the connection to the Derpibooru API.
 #### func  New
 
 ```go
-func New(apikey string) (c *Connection)
+func New(options ...Option) (c *Connection)
 ```
 New creates a new connection to the Derpibooru API.
 
@@ -47,14 +45,14 @@ lately. This is a shame.
 #### func (*Connection) GetFilter
 
 ```go
-func (c *Connection) GetFilter(id int64) (f *Filter, err error)
+func (c *Connection) GetFilter(ctx context.Context, id int64) (f *Filter, err error)
 ```
 GetFilter returns a filter or an error.
 
 #### func (*Connection) GetForum
 
 ```go
-func (c *Connection) GetForum(name string) (*Forum, error)
+func (c *Connection) GetForum(ctx context.Context, name string) (*Forum, error)
 ```
 GetForum returns a forum structure, all ready to go!
 
@@ -64,7 +62,7 @@ scarring that may result thanks to usage of this site's API.
 #### func (*Connection) GetImage
 
 ```go
-func (c *Connection) GetImage(id int) (*Image, error)
+func (c *Connection) GetImage(ctx context.Context, id int) (*Image, []Interaction, error)
 ```
 GetImage grabs image information with the api key of the recieving Connection.
 If something fails it returns an error.
@@ -72,18 +70,16 @@ If something fails it returns an error.
 #### func (*Connection) GetThreadByName
 
 ```go
-func (c *Connection) GetThreadByName(name string) (*Thread, error)
+func (c *Connection) GetThreadByName(ctx context.Context, name string) ([]Post, error)
 ```
 GetThreadByName returns a Thread based on the given thread name.
 
 #### func (*Connection) GetUser
 
 ```go
-func (c *Connection) GetUser(id string) (*User, error)
+func (c *Connection) GetUser(ctx context.Context, id string) (*User, error)
 ```
 GetUser returns information on a user based on their ID.
-
-This is kinda spartan, but it will do for now.
 
 #### type DupeReportModifier
 
@@ -188,17 +184,16 @@ type Forum struct {
 
 Fourm is one of the discussion forums on Derpibooru.
 
-This is where all the chaos and hell mix together into a big ball of horror.
-
 #### type Image
 
 ```go
 type Image struct {
 	ID               string             `json:"id"`
-	IDNumber         int                `json:"id_number"`
-	CreatedAt        string             `json:"created_at"`
-	UpdatedAt        string             `json:"updated_at"`
+	CreatedAt        time.Time          `json:"created_at"`
+	UpdatedAt        time.Time          `json:"updated_at"`
 	DuplicateReports []*DuplicateReport `json:"duplicate_reports"`
+	FirstSeenAt      time.Time          `json:"first_seen_at"`
+	UploaderID       interface{}        `json:"uploader_id"`
 	FileName         string             `json:"file_name"`
 	Description      string             `json:"description"`
 	Uploader         string             `json:"uploader"`
@@ -218,7 +213,6 @@ type Image struct {
 	Sha512Hash       string             `json:"sha512_hash"`
 	OrigSha512Hash   string             `json:"orig_sha512_hash"`
 	SourceURL        string             `json:"source_url"`
-	License          string             `json:"license"`
 	Representations  struct {
 		ThumbTiny  string `json:"thumb_tiny"`
 		ThumbSmall string `json:"thumb_small"`
@@ -229,28 +223,59 @@ type Image struct {
 		Tall       string `json:"tall"`
 		Full       string `json:"full"`
 	} `json:"representations"`
-	IsRendered  bool `json:"is_rendered"`
-	IsOptimized bool `json:"is_optimized"`
+	IsRendered   bool          `json:"is_rendered"`
+	IsOptimized  bool          `json:"is_optimized"`
+	Interactions []interface{} `json:"interactions"`
 }
 ```
 
 Image is an image on the Booru.
 
-#### type Thread
+#### type Interaction
 
 ```go
-type Thread struct {
-	Topics []Topic `json:"topics"`
+type Interaction struct {
+	ID              int    `json:"id"`
+	InteractionType string `json:"interaction_type"`
+	Value           string `json:"value"`
+	UserID          int    `json:"user_id"`
+	ImageID         int    `json:"image_id"`
 }
 ```
 
-Thread is the structure that Derpibooru replies with after asking for a forum
-thread.
+Interaction is the "hard copy" of user interactions on images. Possible kinds
+include (but are not limited to):
 
-#### type Topic
+    - down
+    - up
+    - faved
+
+#### type Option
 
 ```go
-type Topic struct {
+type Option func(*Connection)
+```
+
+Option is a function that modifies the given Connection.
+
+#### func  WithAPIKey
+
+```go
+func WithAPIKey(apiKey string) Option
+```
+WithAPIKey specifies a given API key for all API calls.
+
+#### func  WithDomain
+
+```go
+func WithDomain(domain string) Option
+```
+WithDomain specifies a different base domain to do API calls against
+
+#### type Post
+
+```go
+type Post struct {
 	ID      int64  `json:"id"`
 	TopicID int64  `json:"topic_id"`
 	Author  string `json:"author"`
@@ -263,7 +288,7 @@ type Topic struct {
 }
 ```
 
-Topic is an individual forum topic with its replies.
+Post is an individual forum post.
 
 #### type User
 

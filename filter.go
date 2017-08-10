@@ -1,8 +1,11 @@
 package derpigo
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/url"
 )
 
 // Filter is an image or tag filter.
@@ -26,8 +29,8 @@ type Filter struct {
 }
 
 // GetFilter returns a filter or an error.
-func (c *Connection) GetFilter(id int64) (f *Filter, err error) {
-	data, err := c.getJson(fmt.Sprintf("filters/%d.json", id), 200)
+func (c *Connection) GetFilter(ctx context.Context, id int64) (f *Filter, err error) {
+	data, _, err := c.apiCall(ctx, http.MethodGet, fmt.Sprintf("filters/%d.json", id), url.Values{}, nil, 200)
 	if err != nil {
 		return nil, err
 	}
