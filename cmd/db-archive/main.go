@@ -16,7 +16,8 @@ import (
 )
 
 var (
-	keyFile = flag.String("keyFile", "/home/xena/.local/share/within/db.cadance.key", "file with the derpibooru key to use")
+	keyFile = flag.String("keyfile", os.Getenv("HOME")+"/.local/share/within/db.cadance.key", "file with the derpibooru key to use")
+	outDir  = flag.String("outdir", ".", "directory to download images to")
 )
 
 func main() {
@@ -63,7 +64,7 @@ func main() {
 			tags = tags[0:11]
 		}
 
-		foutpath := "/home/xena/pictures/derpi/" + img.ID + " " + strings.Join(tags, ", ") + "." + img.OriginalFormat
+		foutpath := *outDir + img.ID + " " + strings.Join(tags, ", ") + "." + img.OriginalFormat
 
 		fout, err := os.Create(foutpath)
 		if err != nil {
