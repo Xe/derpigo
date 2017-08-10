@@ -5,7 +5,9 @@ import "testing"
 func TestGetFilter(t *testing.T) {
 	ctx, myC := setup()
 
-	_, err := myC.GetFilter(ctx, 50106)
+	const filterID = 50106 // https://derpibooru.org/filters/50106
+
+	_, err := myC.GetFilter(ctx, filterID)
 	if err != nil {
 		t.Fatal(err)
 	}

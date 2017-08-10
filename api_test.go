@@ -15,7 +15,9 @@ func setup() (context.Context, *Connection) {
 func TestAPICall(t *testing.T) {
 	ctx, myC := setup()
 
-	_, _, err := myC.apiCall(ctx, http.MethodGet, "912673.json", url.Values{}, nil, 200)
+	const imageID = "912673" // https://derpibooru.org/912673
+
+	_, _, err := myC.apiCall(ctx, http.MethodGet, imageID+".json", url.Values{}, nil, 200)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -14,13 +14,16 @@ func TestGetThreadByNameButNotBecauseMissingSlash(t *testing.T) {
 func TestGetThreadByName(t *testing.T) {
 	ctx, myC := setup()
 
-	thread, err := myC.GetThreadByName(ctx, "dis/the-time-wasting-thread")
+	const threadName = "dis/the-time-wasting-thread" // https://derpibooru.org/forums/dis/topics/the-time-wasting-thread
+	const threadTopicID = 8813
+
+	thread, err := myC.GetThreadByName(ctx, threadName)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if thread[0].TopicID != 8813 {
-		t.Fatalf("expected thread id does not match: want %d: %d", 8813, thread[0].TopicID)
+	if thread[0].TopicID != threadTopicID {
+		t.Fatalf("expected thread id does not match: want %d: %d", threadTopicID, thread[0].TopicID)
 	}
 }
 
@@ -36,7 +39,9 @@ func TestGetInvalidForum(t *testing.T) {
 func TestGetForum(t *testing.T) {
 	ctx, myC := setup()
 
-	_, err := myC.GetForum(ctx, "dis")
+	const forumName = "dis" // https://derpibooru.org/forums/dis
+
+	_, err := myC.GetForum(ctx, forumName)
 	if err != nil {
 		t.Fatal(err)
 	}
