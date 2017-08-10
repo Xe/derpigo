@@ -103,28 +103,11 @@ DeleteImage deletes an image from the booru. Needs assistant/mod/admin API key.
 This is useful for handling morons scriptedly. There seems to be a lot of them
 lately. This is a shame.
 */
-func (c *Connection) DeleteImage(id, why string) (err error) {
-	u, err := url.Parse(fmt.Sprintf("https://derpibooru.org/images/%s.json", id))
-	if err != nil {
-		panic(err)
-	}
-
-	q := u.Query()
-	q.Set("key", c.apiKey)
+func (c *Connection) DeleteImage(ctx context.Context, id, why string) error {
+	q := url.Values{}
 	q.Set("deletion_reason", why)
-	u.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("DELETE", u.String(), nil)
-	if err != nil {
-		panic(err)
-	}
-
-	cli := &http.Client{}
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return NewError(err, resp)
-	}
+	_, _, err := c.apiCall(ctx, http.MethodDelete, fmt.Sprintf("https://derpibooru.org/images/%s.json", id), q, nil, 200)
 
 	return err
 }

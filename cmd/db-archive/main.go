@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"io"
 	"io/ioutil"
@@ -26,7 +27,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	c := derpigo.New(string(key))
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	c := derpigo.New(derpigo.WithAPIKey(string(key)))
 
 	for _, i := range flag.Args() {
 		id, err := strconv.Atoi(i)
@@ -48,7 +53,7 @@ func main() {
 			}
 		}
 
-		img, err := c.GetImage(id)
+		img, _, err := c.GetImage(ctx, id)
 		if err != nil {
 			log.Printf("couldn't fetch info on image %d: %v", id, err)
 		}

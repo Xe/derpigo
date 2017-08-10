@@ -16,6 +16,7 @@ Then give it the image ID's you want to delete.
 package main
 
 import (
+	"context"
 	"flag"
 	"io"
 	"io/ioutil"
@@ -47,7 +48,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	c := derpigo.New(string(key))
+	c := derpigo.New(derpigo.WithAPIKey(string(key)))
 
 	for _, i := range flag.Args() {
 		id, err := strconv.Atoi(i)
@@ -69,7 +70,7 @@ func main() {
 			}
 		}
 
-		img, err := c.GetImage(id)
+		img, _, err := c.GetImage(context.Background(), id)
 		if err != nil {
 			log.Printf("couldn't fetch info on image %d: %v", id, err)
 		}
@@ -109,7 +110,7 @@ func main() {
 
 		io.Copy(fout, resp.Body)
 
-		err = c.DeleteImage(i, *reason)
+		err = c.DeleteImage(context.Background(), i, *reason)
 		if err != nil {
 			panic(err)
 		}
