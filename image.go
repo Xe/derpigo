@@ -57,7 +57,7 @@ type Image struct {
 DuplicateReport is a duplicate image report.
 */
 type DuplicateReport struct {
-	ID                  string              `json:"id"`
+	ID                  int64               `json:"id"`
 	State               string              `json:"state"`
 	Reason              string              `json:"reason"`
 	ImageIDNumber       int                 `json:"image_id_number"`
