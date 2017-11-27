@@ -71,7 +71,7 @@ type DuplicateReport struct {
 DupeReportModifier is the weighting of the an image duplicate report.
 */
 type DupeReportModifier struct {
-	ID           string `json:"id"`
+	ID           int64  `json:"id"`
 	Name         string `json:"name"`
 	Avatar       string `json:"avatar"`
 	CommentCount int    `json:"comment_count"`
