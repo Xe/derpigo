@@ -1,6 +1,6 @@
 # derpigo
 
-[API Docs](https://godoc.org/github.com/Xe/derpigo) [License](https://github.com/Xe/derpigo/blob/master/LICENSE)
+[API Docs](https://godoc.org/within.website/derpigo) [License](https://github.com/Xe/derpigo/blob/master/LICENSE)
 
 ## Installation
 
@@ -17,7 +17,7 @@ import (
     "context"
     "os"
 
-    "github.com/Xe/derpigo"
+    "within.website/derpigo"
 )
 
 func main() {
