@@ -23,6 +23,7 @@ Connection models the connection to the Derpibooru API.
 type Connection struct {
 	apiKey string // API key for all DB communication
 	domain string // domain name to communicate with
+	cli *http.Client // HTTP client for communication (default is http.DefaultClient)
 }
 
 // Option is a function that modifies the given Connection.
@@ -40,20 +41,30 @@ func WithAPIKey(apiKey string) Option {
 	}
 }
 
-// WithDomain specifies a different base domain to do API calls against
+// WithDomain specifies a different base domain to do API calls against.
 func WithDomain(domain string) Option {
 	return func(c *Connection) {
 		c.domain = domain
 	}
 }
 
+// WithClient changes the HTTP client used to talk to derpibooru.
+func WithClient(cli *http.Client) Option {
+	return func(c *Connection) {
+		c.cli = cli
+	}
+}
+
 // New creates a new connection to the Derpibooru API.
 func New(options ...Option) (c *Connection) {
-
 	c = &Connection{domain: "derpibooru.org"}
 
 	for _, opt := range options {
 		opt(c)
+	}
+
+	if c.cli == nil {
+		c.cli = http.DefaultClient
 	}
 
 	return
@@ -95,7 +106,7 @@ func (c *Connection) apiCall(ctx context.Context, method, route string, args url
 
 	req = req.WithContext(ctx)
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := c.cli.Do(req)
 	if err != nil {
 		return nil, nil, err
 	}
