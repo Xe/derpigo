@@ -29,7 +29,7 @@ type Image struct {
 	Faves            int                `json:"faves"`
 	CommentCount     int                `json:"comment_count"`
 	Tags             string             `json:"tags"`
-	TagIds           []string           `json:"tag_ids"`
+	TagIds           []int64           `json:"tag_ids"`
 	Width            int                `json:"width"`
 	Height           int                `json:"height"`
 	AspectRatio      float64            `json:"aspect_ratio"`

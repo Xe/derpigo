@@ -5,7 +5,7 @@ import "testing"
 func TestGetUserInformation(t *testing.T) {
 	ctx, myC := setup()
 
-	const username = "Xena" // https://derpibooru.org/profiles/Xena - Creator of this library
+	const username = "Carcer" // https://derpibooru.org/profiles/Carcer - one of the admins
 
 	u, err := myC.GetUser(ctx, username)
 	if err != nil {

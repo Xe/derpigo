@@ -18,8 +18,8 @@ type Filter struct {
 	Description      string  `json:"description"`
 	HiddenTagIds     []int64 `json:"hidden_tag_ids"`
 	SpoileredTagIds  []int64 `json:"spoilered_tag_ids"`
-	SpoileredTags    string  `json:"spoilered_tags"`
-	HiddenTags       string  `json:"hidden_tags"`
+	SpoileredTags    []string  `json:"spoilered_tags"`
+	HiddenTags       []string  `json:"hidden_tags"`
 	HiddenComplex    string  `json:"hidden_complex"`
 	SpoileredComplex string  `json:"spoilered_complex"`
 	Public           bool    `json:"public"`
